@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Alert } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Title from "../component/ui/Title";
 import NumberContainer from "../component/game/NumberContainer";
 import PrimaryButton from "../component/ui/PrimaryButton";
@@ -16,13 +16,19 @@ function generateRandomBetween(min, max, exclude) {
 
 let minBoundary = 1;
 let maxBoundary = 100;
-const GameScreen = ({ userNumber }) => {
+const GameScreen = ({ userNumber, onGameOver }) => {
   const initialGuess = generateRandomBetween(
-    minBoundary,
-    maxBoundary,
+    1,
+    100,
     userNumber,
   );
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
+
+  useEffect(()=>{
+    if(currentGuess === userNumber) {
+        onGameOver()
+    }
+  }, [currentGuess, userNumber])
 
   function nextGuessHandler(direction) {
     if (
