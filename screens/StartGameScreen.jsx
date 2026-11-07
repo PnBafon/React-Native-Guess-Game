@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TextInput, Alert } from "react-native";
 import { useState } from "react";
 import PrimaryButton from "../component/PrimaryButton";
 
-const StartGameScreen = () => {
+const StartGameScreen = ({onPickedNumber}) => {
   const [enteredNumber, setEnteredNumber] = useState("");
 
   function numberInputHandler(enteredText) {
@@ -23,13 +23,15 @@ const StartGameScreen = () => {
       );
       return;
     }
+
+    onPickedNumber(chosenNumber)
   }
   return (
     <View style={styles.inputContainer}>
       <TextInput
         style={styles.numberInput}
         maxLength={2}
-        // keyboardType="number-pad"
+        keyboardType="number-pad"
         autoCorrect={false}
         autoCapitalize="none"
         onChangeText={numberInputHandler}
