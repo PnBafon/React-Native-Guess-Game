@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Alert } from "react-native";
+import { StyleSheet, Text, View, Alert, FlatList } from "react-native";
 import { useState, useEffect } from "react";
 import Title from "../component/ui/Title";
 import NumberContainer from "../component/game/NumberContainer";
@@ -6,6 +6,7 @@ import PrimaryButton from "../component/ui/PrimaryButton";
 import Card from "../component/ui/Card";
 import InstructionText from "../component/ui/InstructionText";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import GuessLogItem from "../component/game/GuessLogItem";
 
 function generateRandomBetween(min, max, exclude) {
   const rndNum = Math.floor(Math.random() * (max - min)) + min;
@@ -22,12 +23,18 @@ let maxBoundary = 100;
 const GameScreen = ({ userNumber, onGameOver }) => {
   const initialGuess = generateRandomBetween(1, 100, userNumber);
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
+  const [guessRounds, setGuessRounds] = useState([initialGuess])
 
   useEffect(() => {
     if (currentGuess === userNumber) {
-      onGameOver();
+      onGameOver(guessRounds.length);
     }
   }, [currentGuess, userNumber]);
+  
+  useEffect(()=>{
+    minBoundary = 1; 
+    maxBoundary = 100
+  }, [])
 
   function nextGuessHandler(direction) {
     if (
@@ -51,7 +58,10 @@ const GameScreen = ({ userNumber, onGameOver }) => {
       currentGuess,
     );
     setCurrentGuess(newRandomNumber);
+    setGuessRounds((prevGuess) => [newRandomNumber,...prevGuess])
   }
+
+  const guessRoundsListLength = guessRounds.length
   return (
     <View style={styles.screen}>
       <Title>Opponent's Guess</Title>
@@ -73,8 +83,9 @@ const GameScreen = ({ userNumber, onGameOver }) => {
         </View>
       </Card>
 
-      <View>
-        <Text>LOG Rounds</Text>
+      <View style={{flex: 1, padding: 16}}>
+        {/* {guessRounds.map(guess => <Text key={guess}>{guess}</Text>)} */}
+        <FlatList  data={guessRounds} renderItem={guessRound => <GuessLogItem roundNumber={guessRoundsListLength - guessRound.index} guess={guessRound.item} />} />
       </View>
     </View>
   );
